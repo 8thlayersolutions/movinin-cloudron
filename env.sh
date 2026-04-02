@@ -2,7 +2,7 @@
 set -eu
 
 export NODE_ENV=production
-export MI_WEBSITE_NAME="Movin' In"
+export MI_WEBSITE_NAME="Movin In"
 export MI_PORT="${PORT:-4004}"
 export MI_HTTPS="false"
 
