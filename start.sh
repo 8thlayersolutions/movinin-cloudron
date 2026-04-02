@@ -71,4 +71,5 @@ set -a
 . "${ENV_FILE}"
 set +a
 
-exec npm run start:setup
+# Run the already-built app, do not build at runtime
+exec sh -c 'node dist/src/setup/setup.js && node --import ./dist/src/monitoring/instrument.js dist/src'
