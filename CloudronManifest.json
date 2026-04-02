@@ -1,0 +1,26 @@
+{
+  "id": "aelassas.8thlayer.movinin",
+  "title": "Movin' In",
+  "author": "8th Layer Solutions",
+  "description": "Cloudron package for the Movin' In rental property management platform.",
+  "tagline": "Rental property management on Cloudron",
+  "version": "0.1.0",
+  "manifestVersion": 2,
+  "website": "https://github.com/aelassas/movinin",
+  "healthCheckPath": "/api/health",
+  "httpPort": 4004,
+  "memoryLimit": 1073741824,
+  "addons": {
+    "mongodb": {},
+    "sendmail": {},
+    "localstorage": {}
+  },
+  "icon": "file://icon.png",
+  "tags": [
+    "property-management",
+    "rentals",
+    "real-estate",
+    "mongodb"
+  ],
+  "postInstallMessage": "Open the app URL to complete setup. Admin and frontend hosts default to the app domain unless overridden in /app/data/env.sh."
+}

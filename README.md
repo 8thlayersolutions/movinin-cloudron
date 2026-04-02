@@ -1,169 +1,42 @@
-[![build](https://github.com/aelassas/movinin/actions/workflows/build.yml/badge.svg)](https://github.com/aelassas/movinin/actions/workflows/build.yml) 
-[![test](https://github.com/aelassas/movinin/actions/workflows/test.yml/badge.svg)](https://github.com/aelassas/movinin/actions/workflows/test.yml)
-[![codecov](https://img.shields.io/codecov/c/github/aelassas/movinin?label=coverage)](https://codecov.io/gh/aelassas/movinin)
-[![loc](https://raw.githubusercontent.com/aelassas/movinin/refs/heads/loc/badge.svg)](https://github.com/aelassas/movinin/actions/workflows/loc.yml)
-[![live demo](https://img.shields.io/badge/live-demo-brightgreen)](https://movinin.dynv6.net/)
-[![docs](https://img.shields.io/badge/docs-wiki-brightgreen)](https://github.com/aelassas/movinin/wiki)
+# Movin' In Cloudron package skeleton
 
-<!--
-[![tested with jest](https://img.shields.io/badge/tested_with-jest-brightgreen?logo=jest)](https://github.com/jestjs/jest)
-[![docs](https://img.shields.io/badge/docs-wiki-brightgreen)](https://github.com/aelassas/movinin/wiki)
-[![live demo](https://img.shields.io/badge/live-demo-brightgreen)](https://movinin.dynv6.net/)
-[![loc](https://raw.githubusercontent.com/aelassas/movinin/refs/heads/loc/badge.svg)](https://github.com/aelassas/movinin/actions/workflows/loc.yml)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/aelassas/movinin/pulls)
-[![codecov](https://codecov.io/gh/aelassas/movinin/graph/badge.svg?token=TXD8SM1QHB)](https://codecov.io/gh/aelassas/movinin)
-[![codecov](https://img.shields.io/codecov/c/github/aelassas/movinin?label=coverage)](https://codecov.io/gh/aelassas/movinin)
-[![coveralls](https://coveralls.io/repos/github/aelassas/movinin/badge.svg?branch=main)](https://coveralls.io/github/aelassas/movinin?branch=main)
-[![open-vscode](https://img.shields.io/badge/open-vscode-1f425f.svg)](https://vscode.dev/github/aelassas/movinin/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/aelassas/movinin/blob/main/.github/CONTRIBUTING.md)
+This package skeleton adapts Movin' In for Cloudron phase 1:
 
-[![containerize](https://github.com/aelassas/movinin/actions/workflows/containerize.yml/badge.svg)](https://github.com/aelassas/movinin/actions/workflows/containerize.yml)
+- removes the bundled MongoDB runtime dependency
+- reads MongoDB settings from Cloudron addon env vars
+- maps Movin' In SMTP settings to Cloudron sendmail
+- redirects CDN/media storage to `/app/data`
+- binds the backend to Cloudron's app port
 
-https://github.com/user-attachments/assets/806cbe2d-9f49-413e-9359-2546306f9653
--->
+## What still needs upstream changes
 
-[![](https://movin-in.github.io/content/cover-1.png)](https://movinin.dynv6.net:3004/)
+This starter package assumes the upstream backend is the main web process exposed by Cloudron. If you want the separate frontend and admin React builds served from the same Cloudron app, you still need one of these patterns:
 
-## Movin' In
+1. Serve the built frontend/admin assets from the backend Express app.
+2. Add a reverse proxy in-container and run backend + admin + frontend as separate processes.
+3. Package backend, admin, and frontend as separate Cloudron apps.
 
-Movin' In is a Rental Property Management Platform with an admin panel for managing properties, customers and bookings, a frontend and a mobile app for renting properties.
+## Expected repository layout
 
-The platform supports Stripe and PayPal payment gateways, allowing you to choose the one best suited for your country or business model. If Stripe isn't available in your region, PayPal serves as a secure and convenient alternative for accepting payments.
+This skeleton assumes the upstream repository root is copied into the package root, with these directories present:
 
-Movin' In supports both single-agency and multi-agency modes. Agencies have access to an admin panel to manage their properties, customers, and bookings. Each newly created agency receives an email prompting them to register and access the system.
+- `backend/`
+- `frontend/`
+- `admin/`
+- `packages/`
 
-The admin panel allows admins to manage agencies, properties, countries, locations, customers, bookings and payments.
+## Suggested next patch to upstream
 
-Customers can sign up via the frontend or mobile app, browse available properties based on location and date, and complete the booking and payment process seamlessly.
+Add a lightweight health endpoint if one does not already exist:
 
-## Quick Links
-* [Overview](https://github.com/aelassas/movinin/wiki/Overview)  
-* [Install Guide (Self-hosted)](https://github.com/aelassas/movinin/wiki/Installing-(Self%E2%80%90hosted))
-* [Install Guide (Docker)](https://github.com/aelassas/movinin/wiki/Installing-(Docker))
-* [Build Mobile App](https://github.com/aelassas/movinin/wiki/Build-Mobile-App)
-* [Payment Gateways](https://github.com/aelassas/movinin/wiki/Payment-Gateways)
-* [FAQ](https://github.com/aelassas/movinin/wiki/FAQ)
-* [Full Documentation](https://github.com/aelassas/movinin/wiki)
+```ts
+app.get('/api/health', (_req, res) => res.status(200).json({ ok: true }))
+```
 
-## Features
+## Install loop
 
-### Agency & Property Management
-
-* Agency management
-* Ready for single or multiple agencies
-* Property management
-* Flexible time-based property availability
-* Booking management
-* Property scheduler
-* Auto-notification system
-
-### Pricing & Payments
-
-* Payment management
-* Multiple payment gateways supported: Stripe, PayPal
-* Multiple payment methods: Credit Card, PayPal, Google Pay, Apple Pay, Link, Pay Later
-
-### Locations & Mapping
-
-* Hierarchical locations with country and map integration
-* Location-based search with nested location support
-* Map display for locations
-
-### User Experience
-
-* Customer management
-* Multiple login options: Google, Facebook, Apple, Email
-* Multiple language support: English, French
-* Multiple currencies support
-* Multiple pagination styles: classic (next/previous), infinite scroll
-* Push notifications
-
-### Security & Performance
-
-* Secure against XSS, XST, CSRF, MITM, and DDoS attacks
-* Responsive admin panel and frontend
-* Native mobile app for Android and iOS (single codebase)
-* Docker support for easy deployment and better developer experience
-* Error monitoring and performance tracing
-
-### Supported Platforms
-
-* iOS
-* Android
-* Web
-* Docker
-
-## Support & Contributing
-
-If this project helped you, saved you time, or inspired you in any way, please consider supporting its future growth and maintenance. You can show your support by starring the repository (it helps increase visibility and shows your appreciation), sharing the project (recommend it to colleagues, communities, or on social media), or  if you'd like to financially support the development via [GitHub Sponsors](https://github.com/sponsors/aelassas) (one-time or monthly), [PayPal](https://www.paypal.me/aelassaspp), or [Buy Me a Coffee](https://www.buymeacoffee.com/aelassas). 
-
-Open-source software requires time, effort, and resources to maintain. Your support helps keep this project alive, up-to-date, and accessible to everyone. Every contribution, big or small, makes a difference and motivates continued work on features, bug fixes, and new ideas.
-
-<!--<a href="https://github.com/sponsors/aelassas"><img src="https://aelassas.github.io/content/github-sponsor-button.png" alt="GitHub" width="210"></a>
-<a href="https://www.paypal.me/aelassaspp"><img src="https://aelassas.github.io/content/paypal-button-v2.png" alt="PayPal" width="208"></a>
-<a href="https://www.buymeacoffee.com/aelassas"><img src="https://aelassas.github.io/content/bmc-button.png" alt="Buy Me A Coffee" width="160"></a>-->
-
-<!--
-To contribute code or report issues, please read the [Contribution Guide](https://github.com/aelassas/movinin/blob/main/.github/CONTRIBUTING.md) to learn about the process, coding standards, and how to submit pull requests.
-
-If you want to customize Movin' In while keeping your fork up to date with the latest changes, check out the [Fork, Customize, and Sync](https://github.com/aelassas/movinin/wiki/Fork,-Customize,-and-Sync) guide in the Wiki.
--->
-
-## Live Demo
-
-### Frontend
-
-* URL: https://movinin.dynv6.net/
-* Login: jdoe@movinin.io
-* Password: M00vinin
-
-### Admin Panel
-
-* URL: https://movinin.dynv6.net:3003/
-* Login: admin@movinin.io
-* Password: M00vinin
-
-### Mobile App
-
-You can install the Android app on any Android device.
-
-### Scan this code with a device
-
-Open the Camera app and point it at this code. Then tap the notification that appears.
-
-<img alt="" width="120" src="https://movin-in.github.io/content/qr-code-7.0.png">
-
-### How to install the Mobile App on Android
-
-* On devices running Android 8.0 (API level 26) and higher, you must navigate to the Install unknown apps system settings screen to enable app installations from a particular location (i.e. the web browser you are downloading the app from).
-
-* On devices running Android 7.1.1 (API level 25) and lower, you should enable the Unknown sources system setting, found in Settings > Security on your device.
-
-### Alternative Way
-
-You can also install the Android App by downloading the APK and installing it on any Android device.
-
-* [Download APK](https://github.com/aelassas/movinin/releases/download/v7.0/movinin-7.0.apk)
-* Login: jdoe@movinin.io
-* Password: M00vinin
-<!--
-## Website Source Code (movin-in.github.io)
-
-The source code for the official Movin' In website is available here:
-
-[https://github.com/movin-in/movin-in.github.io](https://github.com/movin-in/movin-in.github.io)
-
-It features a clean landing page with multilingual support, dark mode, and SEO optimizations to help it reach users in different languages and regions.
-
-The codebase follows the Separation of Concerns (SoC) principle, with a modular and maintainable architecture that aligns with the Single Responsibility Principle (SRP), modularity, and modern frontend best practices. It uses GitHub Actions for automatic builds and deployments. The Android demo app download link is dynamically fetched and updated on the site.
-
-⚡ **Ultra-fast performance**
-
-The website loads in under 1.5 seconds on slow 4G with **0ms blocking**, **0 layout shift**, and a blazing **Speed Index of 0.8**.
-
-Feel free to explore the code, suggest improvements, or use it as a template for your own landing page.
--->
-
-## License
-
-Movin' In is [MIT licensed](https://github.com/aelassas/movinin/blob/main/LICENSE).
+```bash
+cloudron install
+cloudron logs --follow
+cloudron exec --app <app-id>
+```
