@@ -1,48 +1,56 @@
 #!/bin/bash
 set -eu
 
-# Cloudron Mongo addon values normally expose these variables:
-# CLOUDRON_MONGO_URL, CLOUDRON_MONGO_HOST, CLOUDRON_MONGO_PORT,
-# CLOUDRON_MONGO_USERNAME, CLOUDRON_MONGO_PASSWORD, CLOUDRON_MONGO_DATABASE.
-# Build MI_DB_URI from the URL when available, otherwise synthesize one.
-if [ -n "${CLOUDRON_MONGO_URL:-}" ]; then
-  export MI_DB_URI="${CLOUDRON_MONGO_URL}"
-else
-  export MI_DB_URI="mongodb://${CLOUDRON_MONGO_USERNAME}:${CLOUDRON_MONGO_PASSWORD}@${CLOUDRON_MONGO_HOST}:${CLOUDRON_MONGO_PORT}/${CLOUDRON_MONGO_DATABASE}?authSource=admin&appName=movinin"
-fi
+# Cloudron runtime
+export NODE_ENV=production
+export BASE_URL="https://${CLOUDRON_APP_DOMAIN}"
+export APP_DOMAIN="${CLOUDRON_APP_DOMAIN}"
+export APP_ORIGIN="https://${CLOUDRON_APP_DOMAIN}"
 
-export MI_DB_SSL="${MI_DB_SSL:-false}"
-export MI_PORT="${PORT:-4004}"
-export MI_HTTPS="false"
-export MI_AUTH_COOKIE_DOMAIN="${CLOUDRON_APP_DOMAIN}"
-export MI_ADMIN_HOST="${MI_ADMIN_HOST:-https://${CLOUDRON_APP_DOMAIN}}"
-export MI_FRONTEND_HOST="${MI_FRONTEND_HOST:-https://${CLOUDRON_APP_DOMAIN}}"
+# Main listen port for the backend/app
+# Keep this aligned with CloudronManifest.json -> httpPort
+export PORT="${PORT:-4004}"
+export HOST="0.0.0.0"
 
-# Cloudron sendmail addon exposes a local MTA. Movin' In requires SMTP settings.
-# Default to the internal mail relay on port 2525 with no auth.
-export MI_SMTP_HOST="${SMTP_SERVER:-127.0.0.1}"
-export MI_SMTP_PORT="${SMTP_PORT:-2525}"
-export MI_SMTP_USER="${SMTP_USERNAME:-}"
-export MI_SMTP_PASS="${SMTP_PASSWORD:-}"
-export MI_SMTP_FROM="${MI_SMTP_FROM:-noreply@${CLOUDRON_MAIL_DOMAIN:-$CLOUDRON_APP_DOMAIN}}"
+# Persistent storage on Cloudron
+# Cloudron expects runtime writes to go under /app/data for persistence/backups.
+export DATA_ROOT="/app/data"
+export CDN_ROOT="/app/data/cdn"
+export UPLOADS_ROOT="/app/data/uploads"
+mkdir -p "${CDN_ROOT}" "${UPLOADS_ROOT}"
 
-# Persisted storage paths
-export MI_CDN_ROOT="/app/data/cdn"
-export MI_CDN_USERS="/app/data/cdn/users"
-export MI_CDN_TEMP_USERS="/app/data/cdn/temp/users"
-export MI_CDN_PROPERTIES="/app/data/cdn/properties"
-export MI_CDN_TEMP_PROPERTIES="/app/data/cdn/temp/properties"
-export MI_CDN_LOCATIONS="/app/data/cdn/locations"
-export MI_CDN_TEMP_LOCATIONS="/app/data/cdn/temp/locations"
+# MongoDB addon
+# Cloudron injects CLOUDRON_MONGODB_* variables when the mongodb addon is enabled.
+export MONGODB_URL="${CLOUDRON_MONGODB_URL}"
+export MONGODB_HOST="${CLOUDRON_MONGODB_HOST}"
+export MONGODB_PORT="${CLOUDRON_MONGODB_PORT}"
+export MONGODB_DATABASE="${CLOUDRON_MONGODB_DATABASE}"
+export MONGODB_USERNAME="${CLOUDRON_MONGODB_USERNAME}"
+export MONGODB_PASSWORD="${CLOUDRON_MONGODB_PASSWORD}"
 
-export MI_COOKIE_SECRET="${MI_COOKIE_SECRET:-${CLOUDRON_APP_ID}-${CLOUDRON_APP_DOMAIN}-cookie-secret-change-me}"
-export MI_JWT_SECRET="${MI_JWT_SECRET:-${CLOUDRON_APP_ID}-${CLOUDRON_APP_DOMAIN}-jwt-secret-change-me}"
-export MI_WEBSITE_NAME="${MI_WEBSITE_NAME:-Movin' In}"
-export MI_DEFAULT_LANGUAGE="${MI_DEFAULT_LANGUAGE:-en}"
-export MI_TIMEZONE="${MI_TIMEZONE:-UTC}"
+# Alias common names many node apps expect
+export DB_URI="${MONGODB_URL}"
+export DB_HOST="${MONGODB_HOST}"
+export DB_PORT="${MONGODB_PORT}"
+export DB_NAME="${MONGODB_DATABASE}"
+export DB_USER="${MONGODB_USERNAME}"
+export DB_PASSWORD="${MONGODB_PASSWORD}"
 
-# Optional custom overrides live in /app/data/env.sh and are sourced last.
-if [ -f /app/data/env.sh ]; then
-  # shellcheck source=/dev/null
-  . /app/data/env.sh
-fi
+# Mail / sendmail addon
+# Cloudron injects CLOUDRON_EMAIL_* variables when sendmail is enabled.
+export SMTP_HOST="${CLOUDRON_EMAIL_SMTP_SERVER}"
+export SMTP_PORT="${CLOUDRON_EMAIL_SMTP_PORT}"
+export SMTP_SECURE="false"
+export SMTP_USER=""
+export SMTP_PASSWORD=""
+export SMTP_FROM="${SMTP_FROM:-noreply@${CLOUDRON_APP_DOMAIN}}"
+
+# Optional app-facing aliases
+export MAIL_HOST="${SMTP_HOST}"
+export MAIL_PORT="${SMTP_PORT}"
+export MAIL_FROM="${SMTP_FROM}"
+
+# Helpful defaults for upstream code/config
+export CDN_SERVER="${BASE_URL}"
+export CDN_PATH="${CDN_ROOT}"
+export STORAGE_PATH="${UPLOADS_ROOT}"
