@@ -2,14 +2,20 @@
 set -eu
 
 APP_CODE="/app/code"
-APP_USER="cloudron"
 
 source "${APP_CODE}/env.sh"
 
-mkdir -p /app/data /run
-chown -R ${APP_USER}:${APP_USER} /app/data /run
+mkdir -p /app/data /run \
+  /app/data/cdn/users \
+  /app/data/cdn/temp/users \
+  /app/data/cdn/properties \
+  /app/data/cdn/temp/properties \
+  /app/data/cdn/locations \
+  /app/data/cdn/temp/locations
 
-# Write exactly the vars Movin' In expects
+# Do not chown to cloudron; that user does not exist in this image.
+# If permissions become an issue later, we can create an explicit app user in Dockerfile.cloudron.
+
 cat > "${APP_CODE}/backend/.env" <<EOF
 NODE_ENV=${NODE_ENV}
 MI_WEBSITE_NAME=${MI_WEBSITE_NAME}
@@ -52,7 +58,5 @@ MI_PAYPAL_CLIENT_SECRET=${MI_PAYPAL_CLIENT_SECRET}
 MI_ADMIN_EMAIL=${MI_ADMIN_EMAIL}
 EOF
 
-chown ${APP_USER}:${APP_USER} "${APP_CODE}/backend/.env"
-
 cd "${APP_CODE}/backend"
-exec /usr/local/bin/gosu ${APP_USER}:${APP_USER} npm run start:setup
+exec npm run start:setup
