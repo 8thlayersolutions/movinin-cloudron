@@ -4,7 +4,7 @@
   "author": "8th Layer Solutions",
   "description": "Cloudron package for the Movin' In rental property management platform.",
   "tagline": "Rental property management on Cloudron",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "manifestVersion": 2,
   "website": "https://github.com/aelassas/movinin",
   "healthCheckPath": "/api/health",
