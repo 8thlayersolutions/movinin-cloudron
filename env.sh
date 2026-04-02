@@ -38,12 +38,12 @@ export DB_PASSWORD="${MONGODB_PASSWORD}"
 
 # Mail / sendmail addon
 # Cloudron injects CLOUDRON_EMAIL_* variables when sendmail is enabled.
-export SMTP_HOST="${CLOUDRON_EMAIL_SMTP_SERVER}"
-export SMTP_PORT="${CLOUDRON_EMAIL_SMTP_PORT}"
-export SMTP_SECURE="false"
-export SMTP_USER=""
-export SMTP_PASSWORD=""
-export SMTP_FROM="${SMTP_FROM:-noreply@${CLOUDRON_APP_DOMAIN}}"
+export SMTP_HOST="${CLOUDRON_MAIL_SMTP_SERVER}"
+export SMTP_PORT="${CLOUDRON_MAIL_SMTP_PORT}"
+export SMTP_SECURE="true"
+export SMTP_USER="${CLOUDRON_MAIL_SMTP_USERNAME}"
+export SMTP_PASSWORD="${CLOUDRON_MAIL_SMTP_PASSWORD}"
+export SMTP_FROM="${CLOUDRON_MAIL_FROM}"
 
 # Optional app-facing aliases
 export MAIL_HOST="${SMTP_HOST}"
