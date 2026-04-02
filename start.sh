@@ -5,18 +5,19 @@ APP_CODE="/app/code"
 
 source "${APP_CODE}/env.sh"
 
-mkdir -p /app/data /run \
+mkdir -p \
+  /app/data \
+  /app/data/env \
   /app/data/cdn/users \
   /app/data/cdn/temp/users \
   /app/data/cdn/properties \
   /app/data/cdn/temp/properties \
   /app/data/cdn/locations \
-  /app/data/cdn/temp/locations
+  /app/data/cdn/temp/locations \
+  /run
 
-# Do not chown to cloudron; that user does not exist in this image.
-# If permissions become an issue later, we can create an explicit app user in Dockerfile.cloudron.
-
-cat > "${APP_CODE}/backend/.env" <<EOF
+# Write runtime env into persistent writable storage, not /app/code
+cat > /app/data/env/backend.env <<EOF
 NODE_ENV=${NODE_ENV}
 MI_WEBSITE_NAME=${MI_WEBSITE_NAME}
 MI_PORT=${MI_PORT}
@@ -59,4 +60,10 @@ MI_ADMIN_EMAIL=${MI_ADMIN_EMAIL}
 EOF
 
 cd "${APP_CODE}/backend"
+
+# Export everything from the writable env file for the Node app
+set -a
+. /app/data/env/backend.env
+set +a
+
 exec npm run start:setup

@@ -47,4 +47,5 @@ mkdir -p \
   "${MI_CDN_PROPERTIES}" \
   "${MI_CDN_TEMP_PROPERTIES}" \
   "${MI_CDN_LOCATIONS}" \
-  "${MI_CDN_TEMP_LOCATIONS}"
+  "${MI_CDN_TEMP_LOCATIONS}" \
+  /app/data/env
