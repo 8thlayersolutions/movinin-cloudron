@@ -27,6 +27,7 @@ export MI_CDN_PROPERTIES="/app/data/cdn/properties"
 export MI_CDN_TEMP_PROPERTIES="/app/data/cdn/temp/properties"
 export MI_CDN_LOCATIONS="/app/data/cdn/locations"
 export MI_CDN_TEMP_LOCATIONS="/app/data/cdn/temp/locations"
+export MI_LOGS_PATH="/app/data/logs"
 
 export MI_AUTH_COOKIE_DOMAIN="${CLOUDRON_APP_DOMAIN}"
 export MI_ADMIN_HOST="https://${CLOUDRON_APP_DOMAIN}"
