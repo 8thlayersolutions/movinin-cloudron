@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -eux  # <-- important (shows errors)
 
 source /app/code/env.sh
 
@@ -12,6 +12,10 @@ mkdir -p \
   /app/data/cdn/locations \
   /app/data/cdn/temp/locations
 
-cd /app/data
+cd /app/code/backend
 
-exec node /app/code/backend/dist/src
+echo "=== Running setup ==="
+node dist/src/setup/setup.js
+
+echo "=== Starting server ==="
+exec node --import ./dist/src/monitoring/instrument.js dist/src
